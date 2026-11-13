@@ -25,7 +25,7 @@ public:
 
     virtual void updateDirection() = 0;
     virtual void update(float deltaTime) = 0;
-    virtual void render(sf::RenderWindow &window) = 0;
+    virtual void render(sf::RenderWindow &window, bool showDebug) = 0;
 
     virtual ~Entity() = default;
 

@@ -21,7 +21,7 @@ public:
     std::vector<int> objectMap;
     
     MapManager(const GameConfig& config);
-    void render(sf::RenderWindow& window);
+    void render(sf::RenderWindow& window, bool showDebug);
     
 private:
 

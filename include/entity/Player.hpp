@@ -11,7 +11,7 @@ public:
 
     void updateDirection() override;
     void update(float deltaTime) override;
-    void render(sf::RenderWindow &window) override;
+    void render(sf::RenderWindow &window, bool showDebug) override;
 
 private:
     bool isMoving;

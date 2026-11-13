@@ -25,6 +25,11 @@ void KeyHandler::handleKeyEvent(const sf::Event &event)
         {
             rightPressed = true;
         }
+        if (key == sf::Keyboard::Key::F3 && !f3Held)
+        {
+            showDebug = !showDebug;
+            f3Held = true;
+        }
     }
 
     if (event.is<sf::Event::KeyReleased>()) 
@@ -46,6 +51,10 @@ void KeyHandler::handleKeyEvent(const sf::Event &event)
         else if (key == sf::Keyboard::Key::D)
         {
             rightPressed = false;
+        }
+        else if (key == sf::Keyboard::Key::F3)
+        {
+            f3Held = false;
         }
     }
 }

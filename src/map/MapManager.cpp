@@ -212,7 +212,7 @@ void MapManager::loadObjectMap(const std::string &filePath)
     file.close();
 }
 
-void MapManager::render(sf::RenderWindow &window)
+void MapManager::render(sf::RenderWindow &window, bool showDebug)
 {
     // TILES
     for (int y = 0; y < config.maxWorldRow; y++)
@@ -253,16 +253,19 @@ void MapManager::render(sf::RenderWindow &window)
         window.draw(sprite);
 
         // DEBUGGING
-        sf::RectangleShape debugBox;
-        debugBox.setPosition(sf::Vector2f(
-            static_cast<float>(object.worldX),
-            static_cast<float>(object.worldY)));
-        debugBox.setSize(sf::Vector2f(config.tileSize, config.tileSize));
-        debugBox.setFillColor(sf::Color::Transparent);
-        debugBox.setOutlineColor(sf::Color::Red);
-        debugBox.setOutlineThickness(1.0f);
+        if (showDebug)
+        {
+            sf::RectangleShape debugBox;
+            debugBox.setPosition(sf::Vector2f(
+                static_cast<float>(object.worldX),
+                static_cast<float>(object.worldY)));
+            debugBox.setSize(sf::Vector2f(config.tileSize, config.tileSize));
+            debugBox.setFillColor(sf::Color::Transparent);
+            debugBox.setOutlineColor(sf::Color::Red);
+            debugBox.setOutlineThickness(1.0f);
 
-        window.draw(debugBox);
+            window.draw(debugBox);
+        }
     }
 }
 

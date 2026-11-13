@@ -111,7 +111,7 @@ void Player::update(float deltaTime)
 
 }
 
-void Player::render(sf::RenderWindow &window)
+void Player::render(sf::RenderWindow &window, bool showDebug)
 {
     sf::Sprite sprite(spriteNum == 1 ? texture1 : texture2);
     sf::Vector2f pos(
@@ -128,12 +128,15 @@ void Player::render(sf::RenderWindow &window)
     window.draw(sprite);
 
     // DEBUGGING
-    // sf::RectangleShape debugBox;
-    // debugBox.setPosition(sf::Vector2f(worldX, worldY));
-    // debugBox.setSize(sf::Vector2f(config.tileSize, config.tileSize));
-    // debugBox.setFillColor(sf::Color::Transparent);
-    // debugBox.setOutlineColor(sf::Color::Red);
-    // debugBox.setOutlineThickness(1.0f);
+    if (showDebug)
+    {
+        sf::RectangleShape debugBox;
+        debugBox.setPosition(sf::Vector2f(worldX, worldY));
+        debugBox.setSize(sf::Vector2f(config.tileSize, config.tileSize));
+        debugBox.setFillColor(sf::Color::Transparent);
+        debugBox.setOutlineColor(sf::Color::Red);
+        debugBox.setOutlineThickness(1.0f);
 
-    // window.draw(debugBox);
+        window.draw(debugBox);
+    }
 }

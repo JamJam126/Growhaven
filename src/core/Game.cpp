@@ -91,8 +91,8 @@ void Game::render() {
     window.clear();
     window.setView(camera);
 
-    mapManager.render(window);
-    player.render(window);
+    mapManager.render(window, keyHandler.showDebug);
+    player.render(window, keyHandler.showDebug);
     
     window.display();
 }
