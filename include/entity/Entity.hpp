@@ -16,12 +16,14 @@ class Entity {
 public:
     float worldX, worldY;
     float speed;
+    bool collisionOn;
 
     Direction direction;
     GameConfig config;
 
     Entity(const GameConfig &config);
 
+    virtual void updateDirection() = 0;
     virtual void update(float deltaTime) = 0;
     virtual void render(sf::RenderWindow &window) = 0;
 

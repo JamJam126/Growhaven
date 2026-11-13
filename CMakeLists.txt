@@ -11,7 +11,8 @@ add_executable(game
     src/core/main.cpp
     src/core/Game.cpp
     src/core/KeyHandler.cpp
-    src/tile/TileManager.cpp
+    src/core/CollisionChecker.cpp
+    src/map/MapManager.cpp
     src/entity/Entity.cpp
     src/entity/Player.cpp
 )

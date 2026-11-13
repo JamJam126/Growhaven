@@ -4,7 +4,7 @@
 #include <cmath>
 
 Player::Player(
-    const GameConfig &config, 
+    const GameConfig& config, 
     const KeyHandler& keyHandler
 ) : 
     Entity(config),
@@ -17,44 +17,77 @@ Player::Player(
 void Player::setDefaultValues()
 {
     // SET PLAYER SPAWN POINT
-    worldX = 13;
-    worldY = 9;
+    worldX = 12 * config.tileSize;
+    worldY = 8  * config.tileSize;
 
     speed = 300.0f;
-    direction = Direction::Down;
+    direction = Direction::Up;
+    isMoving = false;
     animationTimer = 0;
 
 
-    if(!texture1.loadFromFile("res/player/square_man_1.png"))
+    if(!texture1.loadFromFile("res/player/farmer_down_1.png"))
     {
-        throw std::runtime_error("Failed to load texture: square_man_1");
+        throw std::runtime_error("Failed to load texture: farmer_down_1");
     }
-    if (!texture2.loadFromFile("res/player/square_man_2.png"))
+    if (!texture2.loadFromFile("res/player/farmer_down_2.png"))
     {
-        throw std::runtime_error("Failed to load texture: square_man_2");
+        throw std::runtime_error("Failed to load texture: farmer_down_2");
     }
 
     spriteNum = 1;
 }
 
-void Player::update(float deltaTime)
+void Player::updateDirection()
 {
-    // MOVEMENTS
+    isMoving = true;
+
     if (keyHandler.upPressed)
     {
-        worldY -= (speed * deltaTime) / config.tileSize;
+        direction = Direction::Up;
     }
-    if (keyHandler.downPressed)
+    else if (keyHandler.downPressed)
     {
-        worldY += (speed * deltaTime) / config.tileSize;
+        direction = Direction::Down;
     }
-    if (keyHandler.leftPressed)
+    else if (keyHandler.leftPressed)
     {
-        worldX -= (speed * deltaTime) / config.tileSize;
+        direction = Direction::Left;
     }
-    if (keyHandler.rightPressed)
+    else if (keyHandler.rightPressed)
     {
-        worldX += (speed * deltaTime) / config.tileSize;
+        direction = Direction::Right;
+    }
+    else 
+    {
+        direction = Direction::None;
+        isMoving = false;
+    }
+}
+
+void Player::update(float deltaTime)
+{
+    // PLAYER CAN MOVE IF THERE IS NO COLLISION
+    if (collisionOn == false && isMoving == true)
+    {
+        switch (direction)
+        {
+        case Direction::Up:
+            worldY -= (speed * deltaTime);
+            break;
+
+        case Direction::Down:
+            worldY += (speed * deltaTime);
+            break;
+        
+        case Direction::Left:
+            worldX -= (speed * deltaTime);
+            break;
+        
+        case Direction::Right:
+            worldX += (speed * deltaTime);
+            break;
+        }
     }
 
     // ANIMATION
@@ -82,8 +115,8 @@ void Player::render(sf::RenderWindow &window)
 {
     sf::Sprite sprite(spriteNum == 1 ? texture1 : texture2);
     sf::Vector2f pos(
-        worldX * config.tileSize - config.tileSize,
-        worldY * config.tileSize - config.tileSize
+        worldX,
+        worldY
     );
     sf::Vector2f scale(
         config.scale,
@@ -93,4 +126,14 @@ void Player::render(sf::RenderWindow &window)
     sprite.setScale(scale);
 
     window.draw(sprite);
+
+    // DEBUGGING
+    // sf::RectangleShape debugBox;
+    // debugBox.setPosition(sf::Vector2f(worldX, worldY));
+    // debugBox.setSize(sf::Vector2f(config.tileSize, config.tileSize));
+    // debugBox.setFillColor(sf::Color::Transparent);
+    // debugBox.setOutlineColor(sf::Color::Red);
+    // debugBox.setOutlineThickness(1.0f);
+
+    // window.draw(debugBox);
 }

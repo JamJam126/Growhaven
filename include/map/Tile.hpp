@@ -4,5 +4,4 @@
 struct Tile 
 {
     sf::Texture texture;
-    bool collision = false;
 };

@@ -38,3 +38,6 @@ Thumbs.db
 
 # Local scratch files
 a.txt
+
+# Local Tools
+tools/

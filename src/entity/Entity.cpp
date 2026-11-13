@@ -4,6 +4,7 @@
 
 Entity::Entity(const GameConfig &config) : config(config)
 {
+    collisionOn = false;
 }
 
 void Entity::update(float deltaTime)
