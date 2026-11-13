@@ -38,10 +38,11 @@ private:
 
     Player player;
 
-    int cameraX;
-    int cameraY;
+    float cameraX;
+    float cameraY;
 
     void setupGame();
     void update(float deltaTime);
+    void updateCamera();
     void render();
 };

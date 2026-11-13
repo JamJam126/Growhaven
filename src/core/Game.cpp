@@ -1,6 +1,7 @@
 #include "core/Game.hpp"
 #include <stdio.h>
 #include <algorithm>
+#include <cmath>
 
 Game::Game()
   : window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}), "Growhaven"),
@@ -32,6 +33,15 @@ void Game::run() {
 				window.close();
 			}
 
+            // MATCH CAMERA TO WINDOW SIZE (SHOW MORE WORLD INSTEAD OF STRETCHING)
+            if (const auto* resized = event->getIf<sf::Event::Resized>()) {
+                camera.setSize(sf::Vector2f(
+                    static_cast<float>(resized->size.x),
+                    static_cast<float>(resized->size.y)
+                ));
+                updateCamera();
+            }
+
             keyHandler.handleKeyEvent(*event);
         }
 
@@ -48,13 +58,7 @@ void Game::setupGame() {
     ));
     
     // INITIALIZE CAMERA POSITION
-    cameraX = player.worldX - config.tileSize / 2;
-    cameraY = player.worldY - config.tileSize / 2;
-
-    camera.setCenter(sf::Vector2f(
-        cameraX,
-        cameraY
-    ));
+    updateCamera();
 }
 
 void Game::update(float deltaTime) {
@@ -69,21 +73,31 @@ void Game::update(float deltaTime) {
     player.update(deltaTime);
 
     // UPDATE CAMERA
-    cameraX = std::clamp(
-        player.worldX + config.tileSize / 2.0f,
-        SCREEN_WIDTH / 2.0f,
-        WORLD_WIDTH - (SCREEN_WIDTH / 2.0f)
-    );
+    updateCamera();
+}
 
-    cameraY = std::clamp(
-        player.worldY + config.tileSize / 2.0f,
-        SCREEN_HEIGHT / 2.0f,
-        WORLD_HEIGHT - (SCREEN_HEIGHT / 2.0f)
-    );
-    
+void Game::updateCamera() {
+    const sf::Vector2f viewSize = camera.getSize();
+
+    // FOLLOW PLAYER, BUT DON'T SHOW PAST THE WORLD EDGES.
+    // IF THE VIEW IS BIGGER THAN THE WORLD, CENTER THE WORLD INSTEAD.
+    auto clampAxis = [](float target, float view, float world) {
+        if (view >= world) {
+            return world / 2.0f;
+        }
+        return std::clamp(target, view / 2.0f, world - view / 2.0f);
+    };
+
+    cameraX = clampAxis(player.worldX + config.tileSize / 2.0f, viewSize.x, static_cast<float>(WORLD_WIDTH));
+    cameraY = clampAxis(player.worldY + config.tileSize / 2.0f, viewSize.y, static_cast<float>(WORLD_HEIGHT));
+
+    // SNAP VIEW'S TOP-LEFT TO A WHOLE PIXEL SO TILES STAY CRISP
+    float left = std::round(cameraX - viewSize.x / 2.0f);
+    float top  = std::round(cameraY - viewSize.y / 2.0f);
+
     camera.setCenter(sf::Vector2f(
-        cameraX, 
-        cameraY
+        left + viewSize.x / 2.0f,
+        top  + viewSize.y / 2.0f
     ));
 }
 
