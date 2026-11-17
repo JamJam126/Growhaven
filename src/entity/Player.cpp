@@ -22,20 +22,32 @@ void Player::setDefaultValues()
 
     speed = 300.0f;
     direction = Direction::Up;
+    facing = Direction::Down;
     isMoving = false;
     animationTimer = 0;
 
-
-    if(!texture1.loadFromFile("res/player/farmer_down_1.png"))
-    {
-        throw std::runtime_error("Failed to load texture: farmer_down_1");
-    }
-    if (!texture2.loadFromFile("res/player/farmer_down_2.png"))
-    {
-        throw std::runtime_error("Failed to load texture: farmer_down_2");
-    }
+    loadTextures();
 
     spriteNum = 1;
+}
+
+void Player::loadTextures()
+{
+    // ORDER MUST MATCH THE Direction ENUM: Up, Down, Left, Right
+    const std::string names[4] = {"up", "down", "left", "right"};
+
+    for (int dir = 0; dir < 4; ++dir)
+    {
+        for (int frame = 0; frame < 2; ++frame)
+        {
+            const std::string file = "farmer_" + names[dir] + "_" + std::to_string(frame + 1);
+
+            if (!walkTextures[dir][frame].loadFromFile("res/player/" + file + ".png"))
+            {
+                throw std::runtime_error("Failed to load texture: " + file);
+            }
+        }
+    }
 }
 
 void Player::updateDirection()
@@ -62,6 +74,12 @@ void Player::updateDirection()
     {
         direction = Direction::None;
         isMoving = false;
+    }
+
+    // KEEP FACING THE LAST WALKED DIRECTION WHEN STANDING STILL
+    if (isMoving)
+    {
+        facing = direction;
     }
 }
 
@@ -91,29 +109,37 @@ void Player::update(float deltaTime)
     }
 
     // ANIMATION
-    animationTimer += deltaTime;
-
-    if (animationTimer >= 0.15f)
+    if (isMoving)
     {
-        if (spriteNum == 1)
-        {
-            spriteNum = 2;
-        }
+        animationTimer += deltaTime;
 
-        else if (spriteNum == 2)
+        if (animationTimer >= 0.15f)
         {
-            spriteNum = 1;
-        }
+            if (spriteNum == 1)
+            {
+                spriteNum = 2;
+            }
 
-        animationTimer -= 0.15f;
+            else if (spriteNum == 2)
+            {
+                spriteNum = 1;
+            }
+
+            animationTimer -= 0.15f;
+        }
     }
-
+    else
+    {
+        // STANDING STILL: SHOW IDLE FRAME AND RESET THE CYCLE
+        spriteNum = 1;
+        animationTimer = 0;
+    }
 
 }
 
 void Player::render(sf::RenderWindow &window, bool showDebug)
 {
-    sf::Sprite sprite(spriteNum == 1 ? texture1 : texture2);
+    sf::Sprite sprite(walkTextures[static_cast<int>(facing)][spriteNum - 1]);
     sf::Vector2f pos(
         worldX,
         worldY

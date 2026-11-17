@@ -18,10 +18,14 @@ private:
     int spriteNum;
     float animationTimer;
 
-    sf::Texture texture1;
-    sf::Texture texture2;
+    // LAST DIRECTION THE PLAYER WALKED IN (NEVER None), USED FOR SPRITE SELECTION
+    Direction facing;
+
+    // WALK FRAMES INDEXED AS [Up, Down, Left, Right][frame 1, frame 2]
+    sf::Texture walkTextures[4][2];
 
     const KeyHandler &keyHandler;
     void setDefaultValues();
+    void loadTextures();
 
 };
